@@ -7,7 +7,6 @@ RUN curl -sL https://golang.org/dl/go1.16.5.linux-amd64.tar.gz -o go-amd64.tar.g
 ENV PATH="${PATH}:/usr/local/go/bin"
 RUN git clone https://github.com/risdenk/udm-podman
 WORKDIR udm-podman
-RUN git clone https://github.com/containers/podman
-RUN patch -p1 podman/Makefile build/Makefile.patch
-RUN make -C podman CC='aarch64-linux-gnu-gcc' GOOS=linux GOARCH=arm PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig/ local-cross
+RUN git clone https://github.com/containers/podman && patch -p1 podman/Makefile build/podman-Makefile.patch && make -C podman CC='aarch64-linux-gnu-gcc' GOOS=linux GOARCH=arm PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig/ local-cross && cp ./podman/bin/podman.cross.linux.arm64 /podman-arm64 && rm -rf podman
+RUN git clone https://github.com/opencontainers/runc && patch -p1 runc/Makefile build/runc-Makefile.patch && make -C runc CC='aarch64-linux-gnu-gcc' GOOS=linux GOARCH=arm PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig/ localcross && cp ./runc/runc-arm64 /runc-arm64 && rm -rf runc
 

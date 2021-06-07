@@ -11,17 +11,29 @@ jobs:
         with:
           repository: containers/podman
           path: podman
+      - name: Checkout runc repo
+        uses: actions/checkout@v2
+        with:
+          repository: opencontainers/runc
+          path: runc
       - uses: actions/setup-go@v2
       - run: go version
       - run: |
           sudo apt-get install -y libc6-arm64-cross libc6-dev-arm64-cross binutils-aarch64-linux-gnu libncurses5-dev build-essential bison flex libssl-dev bc gcc-aarch64-linux-gnu
       - run: curl -sL http://ports.ubuntu.com/pool/main/libs/libseccomp/libseccomp-dev_2.5.1-1ubuntu1~20.04.1_arm64.deb -o libseccomp-dev_arm64.deb
       - run: sudo dpkg --force-all -i libseccomp-dev_arm64.deb
-      - run: patch -p1 podman/Makefile build/Makefile.patch
+      - run: patch -p1 podman/Makefile build/podman-Makefile.patch
       - run: make -C podman CC='aarch64-linux-gnu-gcc' GOOS=linux GOARCH=arm PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig/ local-cross
-      - name: Archive build artifacts
+      - name: Archive podman build artifacts
         uses: actions/upload-artifact@v2
         with:
           name: podman-artifact
           path: podman/bin/podman.cross.linux.arm64
+      - run: patch -p1 runc/Makefile build/runc-Makefile.patch
+      - run: make -C runc CC='aarch64-linux-gnu-gcc' GOOS=linux GOARCH=arm PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig/ localcross
+      - name: Archive runc build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: runc-artifact
+          path: runc/runc-arm64
 
