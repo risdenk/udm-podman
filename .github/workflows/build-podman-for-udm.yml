@@ -10,11 +10,13 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: containers/podman
+          ref: v3.3.0
           path: podman
       - name: Checkout runc repo
         uses: actions/checkout@v2
         with:
           repository: opencontainers/runc
+          ref: v1.0.2
           path: runc
       - uses: actions/setup-go@v2
       - run: go version
