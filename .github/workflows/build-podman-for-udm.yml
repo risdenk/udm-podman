@@ -18,6 +18,12 @@ jobs:
           repository: opencontainers/runc
           ref: v1.0.2
           path: runc
+      - name: Checkout conmon repo
+        uses: actions/checkout@v2
+        with:
+          repository: containers/conmon
+          ref: v2.0.29
+          path: conmon
       - uses: actions/setup-go@v2
       - run: go version
       - run: |
@@ -38,4 +44,10 @@ jobs:
         with:
           name: runc-artifact
           path: runc/runc-arm64
+      - run: make -C conmon CC='aarch64-linux-gnu-gcc' GOOS=linux GOARCH=arm PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig/ vendor bin/conmon
+      - name: Archive conmon build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: conmon-artifact
+          path: conmon/bin/conmon
 
